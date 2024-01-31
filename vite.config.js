@@ -5,9 +5,15 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   server: {
     proxy: {
-      "/api": {
+      "/foo": "http://fullcontroldedicado.ddns.net",
+      "^/fallback/.*": {
         target: "http://fullcontroldedicado.ddns.net",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/fallback/, ""),
+      },
+      "/api": {
+        target: "http://fullcontroldedicado.ddns.net",
+        changeOrigin: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
@@ -15,4 +21,9 @@ export default defineConfig({
   plugins: [react()],
 });
 
-//"/api": "http://fullcontroldedicado.ddns.net",
+//",
+/*   "/api": {
+        target: "http://fullcontroldedicado.ddns.net",
+        changeOrigin: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      }, */

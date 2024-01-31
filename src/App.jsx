@@ -6,30 +6,57 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
-  const consulta = () => {
+/*   const consulta = () => {
  
 let myHeaders = new Headers();
 myHeaders.append("Cookie", "rol=usuarioNormal; sesion=bcb0272a5e7e87c9a395076a729835c6; usuario=jp.sarobe%40gmail.com");
 myHeaders.append("Content-Type", "application/json");
 myHeaders.append("Access-Control-Allow-Origin", "*");
 
+    const cabecera = {
+      Cookie:"rol=usuarioNormal; sesion=bcb0272a5e7e87c9a395076a729835c6; usuario=jp.sarobe%40gmail.com"
+    }
 
-    
-let requestOptions = {
+  let requestOptions = {
   method: 'GET',
   headers: myHeaders,
   redirect: 'follow',
   
 };
-console.log(requestOptions)
 
-fetch("/api/servicio/equipos.php/full/", requestOptions)
+
+fetch("/foo"+"/servicio/equipos.php/lite/", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
 
-  }
+  } */
 
+  const consulta = async () => {
+  try {
+    let myHeaders = new Headers();
+    myHeaders.append("Cookie", "rol=usuarioNormal; sesion=bcb0272a5e7e87c9a395076a729835c6; usuario=jp.sarobe%40gmail.com");
+    myHeaders.append("Content-Type", "application/json");
+    
+    let requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+      credentials: "include",
+    };
+
+    const response = await fetch("^/fallback/servicio/equipos.php/lite/", requestOptions);
+    
+    if (!response.ok) {
+      throw new Error('La solicitud no pudo ser completada');
+    }
+
+    const result = await response.text();
+    console.log(result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
 
  
