@@ -5,25 +5,45 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   server: {
     proxy: {
-      "/foo": "http://fullcontroldedicado.ddns.net",
+      "/foo": {
+        target: "https://plataforma.fullcontrolgps.com.ar",
+        changeOrigin: true,
+        configure: (proxy, options) => {
+          proxy.on("proxyRes", (proxyRes, req, res) => {
+            const cookies = proxyRes.headers["set-cookie"];
+            if (cookies) {
+              console.log("Cookies from API:", cookies);
+            }
+          });
+        },
+      },
       "^/fallback/.*": {
-        target: "http://fullcontroldedicado.ddns.net",
+        target: "https://plataforma.fullcontrolgps.com.ar",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/fallback/, ""),
+        configure: (proxy, options) => {
+          proxy.on("proxyRes", (proxyRes, req, res) => {
+            const cookies = proxyRes.headers["set-cookie"];
+            if (cookies) {
+              console.log("Cookies from API:", cookies);
+            }
+          });
+        },
       },
       "/api": {
-        target: "http://fullcontroldedicado.ddns.net",
+        target: "https://plataforma.fullcontrolgps.com.ar",
         changeOrigin: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
+        configure: (proxy, options) => {
+          proxy.on("proxyRes", (proxyRes, req, res) => {
+            const cookies = proxyRes.headers["Set-Cookie"];
+            if (cookies) {
+              console.log("Cookies from API:", cookies);
+            }
+          });
+        },
       },
     },
   },
   plugins: [react()],
 });
-
-//",
-/*   "/api": {
-        target: "http://fullcontroldedicado.ddns.net",
-        changeOrigin: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      }, */

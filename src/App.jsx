@@ -5,89 +5,71 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
-
-/*   const consulta = () => {
- 
-let myHeaders = new Headers();
-myHeaders.append("Cookie", "rol=usuarioNormal; sesion=bcb0272a5e7e87c9a395076a729835c6; usuario=jp.sarobe%40gmail.com");
-myHeaders.append("Content-Type", "application/json");
-myHeaders.append("Access-Control-Allow-Origin", "*");
-
-    const cabecera = {
-      Cookie:"rol=usuarioNormal; sesion=bcb0272a5e7e87c9a395076a729835c6; usuario=jp.sarobe%40gmail.com"
-    }
-
-  let requestOptions = {
-  method: 'GET',
-  headers: myHeaders,
-  redirect: 'follow',
-  
-};
-
-
-fetch("/foo"+"/servicio/equipos.php/lite/", requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-
-  } */
+      const user1 = "jp.sarobe@gmail.com";
+      const pass1 = "juan7595";
+      const user2 = "logistica@globalfresh.com.ar";
+      const pass2 = "ANDRES";
 
   const consulta = async () => {
-  try {
-    let myHeaders = new Headers();
-    myHeaders.append("Cookie", "rol=usuarioNormal; sesion=bcb0272a5e7e87c9a395076a729835c6; usuario=jp.sarobe%40gmail.com");
-    myHeaders.append("Content-Type", "application/json");
-    
-    let requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
-      credentials: "include",
-    };
+    try {
+      document.cookie = "rol=usuarioNormal" ;
+      document.cookie = "sesion=bcb0272a5e7e87c9a395076a729835c6";
+      document.cookie = "usuario=jp.sarobe%40gmail.com";
 
-    const response = await fetch("^/fallback/servicio/equipos.php/lite/", requestOptions);
-    
-    if (!response.ok) {
-      throw new Error('La solicitud no pudo ser completada');
-    }
+      let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
 
-    const result = await response.text();
-    console.log(result);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
+      let requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow',
+        credentials: "include", // Asegura que las cookies se envíen automáticamente
+      };
 
+      const response = await fetch("api/servicio/equipos.php/lite", requestOptions);
 
- 
-  const loguearse = () => {
-  
-    const user1 = "jp.sarobe@gmail.com"
-    const pass1 = "juan7595"
-    const user2 = "logistica@globalfresh.com.ar"
-    const pass2 = "ANDRES"
-    
-    fetch("api/servicio/login2.php/login?usuario="+user1+"&clave=" +pass1)
-      .then(response => {
-        response.text()
-        console.log(response)
-      })
-
-      .then(result => {
-         const cookies = result.headers.get('set-cookie');
-    
-    // Configurar las cookies en una variable
-    const cookiesArray = cookies.split(';');
-
-    // Aquí puedes hacer lo que quieras con las cookies
-    console.log('Cookies:', cookiesArray);
+      if (!response.ok) {
+        throw new Error('La solicitud no pudo ser completada');
       }
-        
-        )
-      .catch(error => console.log('error', error));
+
+      const result = await response.text();
+      console.log(result);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  const loguearse = async () => {
+    try {
 
 
-}
+      const response = await fetch(`api/servicio/login2.php/login?usuario=${user2}&clave=${pass2}`);
+      
+      if (!response.ok) {
+        throw new Error('Error en la solicitud de inicio de sesión');
+      } else {
+        console.log('Inicio de sesión exitoso');
+      }
+      
+      const headers = {};
+      response.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+     
+      const cookies = document.cookie;
+    console.log('Cookies almacenadas:', cookies);
+
+
+      if (cookies) {
+        const cookiesArray = cookies.split(';');
+        console.log('Cookies:', cookiesArray);
+      } else {
+        console.log('No se encontraron cookies en la respuesta');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } 
+  }
 
   return (
     <>

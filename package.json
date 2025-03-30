@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
- "proxy": "http://fullcontroldedicado.ddns.net",
+ "proxy": "https://plataforma.fullcontrolgps.com.art",
   "scripts": {
     "dev": "vite --port 80",
     "build": "vite build",
