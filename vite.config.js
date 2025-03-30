@@ -32,7 +32,7 @@ export default defineConfig({
       },
       "/api": {
         target: "https://plataforma.fullcontrolgps.com.ar",
-        changeOrigin: false,
+        changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
         configure: (proxy, options) => {
           proxy.on("proxyRes", (proxyRes, req, res) => {
