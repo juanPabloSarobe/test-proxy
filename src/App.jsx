@@ -1,75 +1,122 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import LoginForm from "./components/LoginForm";
 
 function App() {
-  const [count, setCount] = useState(0)
-      const user1 = "jp.sarobe@gmail.com";
-      const pass1 = "juan7595";
-      const user2 = "logistica@globalfresh.com.ar";
-      const pass2 = "ANDRES";
+  const [count, setCount] = useState(0);
+  const user1 = "jp.sarobe@gmail.com";
+  const pass1 = "juan7595";
+  const user2 = "logistica@globalfresh.com.ar";
+  const pass2 = "ANDRES";
+  const user3 = "SSMA";
+  const pass3 = "SEGURIDAD2024";
 
   const consulta = async () => {
     try {
-      document.cookie = "rol=usuarioNormal" ;
-      document.cookie = "sesion=bcb0272a5e7e87c9a395076a729835c6";
-      document.cookie = "usuario=jp.sarobe%40gmail.com";
-
       let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Content-Type", "application/json");
 
       let requestOptions = {
-        method: 'GET',
+        method: "GET",
         headers: myHeaders,
-        redirect: 'follow',
+        redirect: "follow",
         credentials: "include", // Asegura que las cookies se envíen automáticamente
       };
 
-      const response = await fetch("api/servicio/equipos.php/lite", requestOptions);
+      const response = await fetch(
+        "api/servicio/equipos.php/lite",
+        requestOptions
+      );
 
       if (!response.ok) {
-        throw new Error('La solicitud no pudo ser completada');
+        throw new Error("La solicitud no pudo ser completada");
       }
 
       const result = await response.text();
       console.log(result);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
-  }
-
-  const loguearse = async () => {
+  };
+  const pref = async () => {
     try {
+      let myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
 
+      let requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+        credentials: "include", // Asegura que las cookies se envíen automáticamente
+      };
 
-      const response = await fetch(`api/servicio/login2.php/login?usuario=${user2}&clave=${pass2}`);
-      
+      const response = await fetch(
+        "api/servicio/equipos.php/pref",
+        requestOptions
+      );
+
       if (!response.ok) {
-        throw new Error('Error en la solicitud de inicio de sesión');
-      } else {
-        console.log('Inicio de sesión exitoso');
+        throw new Error("La solicitud no pudo ser completada");
       }
-      
-      const headers = {};
-      response.headers.forEach((value, key) => {
-        headers[key] = value;
-      });
-     
-      const cookies = document.cookie;
-    console.log('Cookies almacenadas:', cookies);
 
+      const result = await response.text();
+      console.log(result);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-      if (cookies) {
-        const cookiesArray = cookies.split(';');
-        console.log('Cookies:', cookiesArray);
+  const handleLogin = async (username, password) => {
+    try {
+      let myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+      // Crear el payload en formato URL-encoded
+      const payload = new URLSearchParams();
+      payload.append("usuario", username);
+      payload.append("clave", password);
+
+      let requestOptions = {
+        method: "POST",
+        body: payload.toString(), // Convertir a string
+        headers: myHeaders,
+        redirect: "follow",
+        credentials: "include", // Asegura que las cookies se envíen automáticamente
+      };
+
+      console.log("Enviando datos de inicio de sesión:", requestOptions.body);
+
+      const response = await fetch(
+        `api/servicio/login.php/login`,
+        requestOptions
+      );
+
+      if (!response.ok) {
+        throw new Error("Error en la solicitud de inicio de sesión");
       } else {
-        console.log('No se encontraron cookies en la respuesta');
+        const result = await response.json();
+        console.log("Resultado de inicio de sesión:", result?.cookie);
+        if (result?.cookie == null) {
+          throw new Error("usuario o password incorrecto");
+        }
+        console.log("Inicio de sesión exitoso", result.cookie);
+        if (result && result.rol) {
+          document.cookie = `rol=${result.rol}`;
+        }
+        if (result && result.cookie) {
+          document.cookie = `sesion=${result.cookie}`;
+        }
+        if (result && result.rol) {
+          document.cookie = `usuario=${username}`;
+        }
+        console.log("Cookies almacenadas:", document.cookie);
       }
     } catch (error) {
-      console.error('Error:', error);
-    } 
-  }
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <>
@@ -86,12 +133,11 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <button onClick={loguearse}>
-        loguearse
-        </button>
-        <button onClick={consulta}>
-        Consulta
-        </button>
+
+        {/* Integración del componente LoginForm */}
+        <LoginForm onLogin={handleLogin} />
+        <button onClick={consulta}>Consulta</button>
+        <button onClick={pref}>pref</button>
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
@@ -100,7 +146,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

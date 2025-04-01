@@ -36,7 +36,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
         configure: (proxy, options) => {
           proxy.on("proxyRes", (proxyRes, req, res) => {
-            const cookies = proxyRes.headers["Set-Cookie"];
+            const cookies = proxyRes.headers["set-cookie"];
             if (cookies) {
               console.log("Cookies from API:", cookies);
             }
